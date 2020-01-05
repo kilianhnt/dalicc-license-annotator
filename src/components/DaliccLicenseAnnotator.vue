@@ -134,7 +134,7 @@
                                 </v-container>
                             </v-card>
 
-                            <v-btn color="primary" :loading="licensing" @click="startLicensingProcess">Start licensing
+                            <v-btn color="primary" :loading="licensing" @click="startLicensingProcess">{{licenseOutput.length > 0 || alreadyLicensed ? 'Start override' : 'Start licensing'}}
                             </v-btn>
 
                             <v-btn text @click="evaluate(2)">Go back</v-btn>
@@ -222,8 +222,6 @@
                 this.daliccLicense = new EthereumLicense(this.contract);
                 this.account = this.daliccLicense.getSelectedAddress();
                 this.daliccLicense.getLicenseInformation(data, this.account, (error, result) => {
-                    // eslint-disable-next-line
-                    console.log(error, result);
                     if (!error) {
                         if (!result[0]) {
                             this.information = 'No licensed content detected.';
@@ -247,12 +245,8 @@
                 } else if (this.contentType === this.possibleToLicense[1]) {
                     data = this.fileContent;
                 }
-                // eslint-disable-next-line
-                console.log(data)
                 this.daliccLicense.license(data, this.licenseTypeUri, this.account, (error, result) => {
                     this.licensing = false;
-                    // eslint-disable-next-line
-                    console.log(result);
                     if (!error) {
                         this.licenseOutput = result;
                     } else {
