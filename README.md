@@ -1,7 +1,11 @@
-# dallic-licencer
+# DALICC Licence Annotator
+
+This work addresses the attachment of semantic Licenses of DALICC to data and content using a decentralised and trusted application. To achieve this an approach using the Ethereum Platform was chosen and implemented.
 
 ## Project setup
 ```
+npm install -g vue vue-cli
+npm install --save vuex vue-router vue-axios crypto-js big-number web3
 npm install
 ```
 
