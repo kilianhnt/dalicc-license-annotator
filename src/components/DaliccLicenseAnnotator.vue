@@ -90,15 +90,17 @@
                                     <v-textarea id="information" label="Recieved information"
                                                 filled disabled="disabled" :value="information"
                                                 prepend-icon="mdi-information"></v-textarea>
+                                    <div v-if="alreadyLicensed && userIsLicensor && userIsLicensor !== null" id="isOwner">Your are the owner!</div>
+                                    <div v-if="alreadyLicensed && !userIsLicensor && userIsLicensor !== null" id="isNotOwner">Your are not the owner!</div>
                                 </v-container>
                             </v-card>
 
                             <v-btn color="primary" v-if="!checked || readOnly"
-                                   :disabled="(this.fileContent === null && this.contentType === this.possibleToLicense[1]) || (this.urlContent === null && this.contentType === this.possibleToLicense[0])"
+                                   :disabled="(fileContent === null && contentType === possibleToLicense[1]) || (urlContent === null && contentType === possibleToLicense[0])"
                                    :loading="checking" @click="startCheck">Check
                             </v-btn>
-                            <v-btn color="primary" v-if="checked && !readOnly"
-                                   :disabled="(this.fileContent === null && this.contentType === this.possibleToLicense[1]) || (this.urlContent === null && this.contentType === this.possibleToLicense[0])"
+                            <v-btn color="primary" v-if="checked && !readOnly && ((userIsLicensor && userIsLicensor !== null && alreadyLicensed) || !alreadyLicensed)"
+                                   :disabled="((fileContent === null && contentType === possibleToLicense[1]) || (urlContent === null && contentType === possibleToLicense[0]))"
                                    @click="evaluate(3)">Continue
                             </v-btn>
 
@@ -110,10 +112,10 @@
                                 <v-container fluid>
                                     <v-toolbar-title>License your content</v-toolbar-title>
                                     <br/>
-                                    <v-text-field id="url-summary" v-if="this.contentType === this.possibleToLicense[0]"
+                                    <v-text-field id="url-summary" v-if="contentType === possibleToLicense[0]"
                                                   filled disabled="disabled" :value="urlContent" label="URL to license"
                                                   prepend-icon="mdi-web"></v-text-field>
-                                    <v-text-field id="url-summary" v-if="this.contentType === this.possibleToLicense[1]"
+                                    <v-text-field id="url-summary" v-if="contentType === possibleToLicense[1]"
                                                   filled disabled="disabled" :value="fileContent"
                                                   label="File to license"
                                                   prepend-icon="mdi-file"></v-text-field>
@@ -170,6 +172,7 @@
                 contentType: null,
                 licenseType: null,
                 licenseTypeUri: null,
+                userIsLicensor: null,
                 urlContent: null,
                 fileContent: null,
                 checked: false,
@@ -207,6 +210,7 @@
                 if (this.currentStep < 3) {
                     this.checked = false;
                     this.checking = false;
+                    this.userIsLicensor = null;
                     this.information = ''
                 }
             }
@@ -225,16 +229,22 @@
                     if (!error) {
                         if (!result[0]) {
                             this.information = 'No licensed content detected.';
+                            this.alreadyLicensed = false;
                         } else {
                             this.alreadyLicensed = true;
                             this.information = 'Already licensed: ' + result[1] + ' ' + result[2];
+                            if (typeof this.daliccLicense.getSelectedAddress() === 'string') {
+                                this.userIsLicensor = result[2].toLowerCase() === this.daliccLicense.getSelectedAddress().toLowerCase();
+                            } else {
+                                this.userIsLicensor = false
+                            }
                         }
                     } else {
                         this.information = 'Something went wrong. Please retry later.';
                     }
                     this.checking = false;
                     this.checked = true;
-                });
+                    });
             }
             ,
             startLicensingProcess() {
@@ -272,6 +282,7 @@
             setUrlContent() {
                 this.urlContent = document.getElementById('url').value;
                 this.checked = false;
+                this.userIsLicensor = null;
                 this.information = '';
                 if (this.urlContent.length === 0) this.urlContent = null;
             }
@@ -281,6 +292,7 @@
                 reader.onload = (event) => {
                     this.fileContent = event.target.result;
                     this.checked = false;
+                    this.userIsLicensor = null;
                     this.information = '';
                 }
                 reader.readAsText(document.getElementById('file').files[0]);
@@ -351,5 +363,15 @@
 
     .v-stepper__step__step {
         background-color: #42b983 !important;
+    }
+
+    #isOwner {
+        color: #0f8e0f;
+        font-weight: bold;
+    }
+
+    #isNotOwner {
+        color: #ea4a3c;
+        font-weight: bold;
     }
 </style>
