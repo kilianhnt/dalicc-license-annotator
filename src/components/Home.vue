@@ -4,24 +4,18 @@
         <div class="half abs right dark-bg">
             <div class="wrapper">
                 <div class="bottom-center-box">
-                    <h2>Lorem ipsum</h2>
-                    <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
-                        Aenean
-                        massa. Cum sociis natoque penatibus et magnis dis.</p>
-                        <v-btn @click="goToRead" x-large><v-icon>mdi-security</v-icon> retrieve license information</v-btn>
+                    <h2>Retrieve license informations</h2>
+                    <p>Retrieve license information from the Ethereum Blockchain in two steps.</p>
+                        <v-btn @click="goToRead" x-large><v-icon>mdi-security</v-icon>retrieve license information now</v-btn>
                 </div>
             </div>
         </div>
         <div class="half abs left dark">
             <div class="bottom-center-box">
                 <div class="wrapper">
-                    <h2>Aliquam lorem ante</h2>
-                    <p>ius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur
-                        ullamcorper
-                        ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus,
-                        sem
-                        quam semper libero, </p>
-                        <v-btn x-large @click="gotToWrite" color="primary" dark style="background: #42b983 !important"><v-icon>mdi-shield-key</v-icon> license your work</v-btn>
+                    <h2>License your work</h2>
+                    <p>License your work on the Ethereum Blockchain in three steps.</p>
+                        <v-btn x-large @click="gotToWrite" color="primary" dark style="background: #42b983 !important"><v-icon>mdi-shield-key</v-icon> license your work now</v-btn>
                 </div>
             </div>
         </div>

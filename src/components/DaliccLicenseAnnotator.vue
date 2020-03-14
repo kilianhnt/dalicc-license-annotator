@@ -2,7 +2,7 @@
     <div class="fullscreen" v-bind:class="{ 'dark-bg': readOnly }">
         <div id="annotator" class="fullscreen">
             <div id="content">
-                <h1>License your work</h1>
+                <h1>{{readOnly ? 'Retrieve license information' : 'License your work'}}</h1>
                 <br/>
                 <v-stepper v-model="currentStep" >
                     <v-stepper-header>
