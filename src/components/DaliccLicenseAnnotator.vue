@@ -130,7 +130,7 @@
                                                   filled disabled="disabled" :value="account"
                                                   label="Your METAMASK account"
                                                   prepend-icon="mdi-wallet"></v-text-field>
-                                    <v-textarea id="licensed-output" label="Output"
+                                    <v-textarea id="licensed-output" label="Hash value"
                                                 filled disabled="disabled" :value="licenseOutput"
                                                 prepend-icon="mdi-information"></v-textarea>
                                 </v-container>
