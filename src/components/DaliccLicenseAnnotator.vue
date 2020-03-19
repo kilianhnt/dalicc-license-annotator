@@ -186,6 +186,7 @@
             }
         },
         mounted: function () {
+            store.commit('fetchDaliccLicenses');
             // Modern dapp/legacy dapp browsers...
             if (window.ethereum || window.web3) {
                 this.dappBrowser = true;

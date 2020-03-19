@@ -38,13 +38,13 @@ export default new Vuex.Store({
                             'Content-Type': 'application/json'
                         }
                     })
-                        .then((data) => {
-                            const licenses = data.data.results.bindings;
-                            for (let i = 0; i < licenses.length; i++) {
-                                this.state.daliccLicenses.push([licenses[i].title.value, licenses[i].uri.value]);
-                            }
-                            this.state.daliccLicenses.sort();
-                        });
+                    .then((data) => {
+                        const licenses = data.data.results.bindings;
+                        for (let i = 0; i < licenses.length; i++) {
+                            this.state.daliccLicenses.push([licenses[i].title.value, licenses[i].uri.value]);
+                        }
+                        this.state.daliccLicenses.sort();
+                    });
                 });
         }
     }
