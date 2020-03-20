@@ -9,7 +9,9 @@ export default new Vuex.Store({
         readOnly: null,
         daliccLicenses: [],
         daliccLicensesUris: [],
-        daliccLicensesAxiosError: false
+        daliccLicensesAxiosError: false,
+        snackbar: false,
+        snackbarText: '',
     },
     mutations: {
         fetchDaliccLicenses: function () {
@@ -46,6 +48,12 @@ export default new Vuex.Store({
                         this.state.daliccLicenses.sort();
                     });
                 });
+        },
+        setSnackbarText(state, text) {
+            state.snackbarText = text;
+        },
+        setSnackbar(state, b) {
+            state.snackbar = b;
         }
     }
 })

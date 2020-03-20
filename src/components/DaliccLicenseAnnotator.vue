@@ -1,5 +1,11 @@
 <template>
     <div class="fullscreen" v-bind:class="{ 'dark-bg': readOnly }">
+        <v-app-bar dense id="header">
+            <v-btn @click="$router.push({name: 'Home'})" icon color="primary" fab>
+                <v-icon>mdi-home</v-icon>
+            </v-btn>
+            <v-toolbar-title>DALICC license annotator</v-toolbar-title>
+        </v-app-bar>
         <div id="annotator" class="fullscreen">
             <div id="content">
                 <h1>{{readOnly ? 'Retrieve license information' : 'License your work'}}</h1>
@@ -53,10 +59,10 @@
                                               label="Content type" @change="setContentType"
                                               required prepend-icon="mdi-file"></v-select>
 
-                                    <v-select v-if="!readOnly" :items="daliccLicenseNames" id="license-type" filled
+                                    <v-autocomplete v-if="!readOnly" :items="daliccLicenseNames" id="license-type" filled
                                               dense
                                               label="License type" @change="setLicenseType"
-                                              required prepend-icon="mdi-copyright"></v-select>
+                                              required prepend-icon="mdi-copyright"></v-autocomplete>
                                 </v-container>
 
                             </v-card>
@@ -77,19 +83,21 @@
                                         <v-subheader>Please insert the URL you want to license.
                                         </v-subheader>
                                         <v-text-field id="url" placeholder="https://www.example.com"
-                                                      filled v-on:keyup.enter="startCheck"
+                                                      filled v-on:keyup.enter="startCheck" label="URL"
                                                       v-on:keyup="setUrlContent" prepend-icon="mdi-web"></v-text-field>
                                     </div>
                                     <div v-if="this.contentType === this.possibleToLicense[1]">
                                         <v-subheader>Please select the file you want to license.
                                         </v-subheader>
-                                        <v-file-input id="file" label="Select your file" filled @change="setFileContent"
+                                        <v-file-input id="file" label="File" filled @change="setFileContent"
                                                       show-size
                                                       prepend-icon="mdi-file"></v-file-input>
                                     </div>
-                                    <v-textarea id="information" label="Recieved information"
-                                                filled disabled="disabled" :value="information"
-                                                prepend-icon="mdi-information"></v-textarea>
+                                    <v-card align="left" :loading="checking" v-if="information.length > 0">
+                                        <v-card-subtitle><v-icon>mdi-information</v-icon> Recieved information</v-card-subtitle>
+                                        <v-card-text v-html="information"></v-card-text>
+                                    </v-card>
+                                    <br />
                                     <div v-if="alreadyLicensed && userIsLicensor && userIsLicensor !== null" id="isOwner">Your are the owner!</div>
                                     <div v-if="alreadyLicensed && !userIsLicensor && userIsLicensor !== null" id="isNotOwner">Your are not the owner!</div>
                                 </v-container>
@@ -98,7 +106,7 @@
                             <v-btn color="primary" v-if="!checked || readOnly"
                                    :disabled="(fileContent === null && contentType === possibleToLicense[1]) || (urlContent === null && contentType === possibleToLicense[0])"
                                    :loading="checking" @click="startCheck">Check
-                            </v-btn>
+                            </v-btn>&nbsp;
                             <v-btn color="primary" v-if="checked && !readOnly && ((userIsLicensor && userIsLicensor !== null && alreadyLicensed) || !alreadyLicensed)"
                                    :disabled="((fileContent === null && contentType === possibleToLicense[1]) || (urlContent === null && contentType === possibleToLicense[0]))"
                                    @click="evaluate(3)">Continue
@@ -117,7 +125,7 @@
                                                   prepend-icon="mdi-web"></v-text-field>
                                     <v-text-field id="url-summary" v-if="contentType === possibleToLicense[1]"
                                                   filled disabled="disabled" :value="fileContent"
-                                                  label="File to license"
+                                                  label="Filename"
                                                   prepend-icon="mdi-file"></v-text-field>
 
                                     <a target="_blank" :href="licenseTypeUri">
@@ -183,6 +191,7 @@
                 alreadyLicensed: false,
                 licenseOutput: '',
                 account: null,
+                snackbar: false,
             }
         },
         mounted: function () {
@@ -233,7 +242,7 @@
                             this.alreadyLicensed = false;
                         } else {
                             this.alreadyLicensed = true;
-                            this.information = 'Already licensed: ' + result[1] + ' ' + result[2];
+                            this.information = 'Licensor: ' + result[2] + '<br />License: <a target="_blank" href="' + result[1] + '">' + result[1].split('/')[result[1].split('/').length-1] + '</a>';
                             if (typeof this.daliccLicense.getSelectedAddress() === 'string') {
                                 this.userIsLicensor = result[2].toLowerCase() === this.daliccLicense.getSelectedAddress().toLowerCase();
                             } else {
@@ -260,6 +269,9 @@
                     this.licensing = false;
                     if (!error) {
                         this.licenseOutput = result;
+                        this.$router.push({name: 'Home'});
+                        this.$store.commit('setSnackbarText', 'Successfully licensed: ' + result);
+                        this.$store.commit('setSnackbar', true);
                     } else {
                         this.licenseOutput = 'Something went wrong. Please retry later.';
                     }
@@ -295,7 +307,7 @@
                     this.checked = false;
                     this.userIsLicensor = null;
                     this.information = '';
-                }
+                };
                 reader.readAsText(document.getElementById('file').files[0]);
             }
         },
@@ -332,7 +344,7 @@
         margin-bottom: 2em;
     }
 
-    button {
+    #annotator button {
         margin-top: 3em;
     }
 
@@ -374,5 +386,11 @@
     #isNotOwner {
         color: #ea4a3c;
         font-weight: bold;
+    }
+    #header {
+        z-index: 100;
+    }
+    #header i {
+        margin: 0px
     }
 </style>

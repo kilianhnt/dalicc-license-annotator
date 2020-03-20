@@ -2,6 +2,7 @@
     <div id="app">
         <v-app>
             <router-view></router-view>
+            <v-snackbar v-model="snackbar" color="rgb(66, 185, 131)">{{snackbarText}}</v-snackbar>
         </v-app>
     </div>
 </template>
@@ -13,6 +14,19 @@
         name: 'app',
         mounted: function () {
             store.commit('fetchDaliccLicenses')
+        },
+        computed: {
+            snackbar: {
+                get: function () {
+                    return this.$store.state.snackbar
+                },
+                set: function (v) {
+                    this.$store.commit('setSnackbar', v)
+                }
+            },
+            snackbarText() {
+                return this.$store.state.snackbarText
+            }
         }
     }
 </script>

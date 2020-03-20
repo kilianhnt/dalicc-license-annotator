@@ -9,17 +9,17 @@ export default new Router({
     routes: [
         {
             path: '/',
-            name: 'DALLIC license annotator',
+            name: 'Home',
             component: Home,
         },
         {
             path: '/licensing',
-            name: 'Licensing - DALLIC license annotator',
+            name: 'Licensing',
             component: DaliccLicenseAnnotator
         },
         {
             path: '/retrieve',
-            name: 'Retrieve information - DALLIC license annotator',
+            name: 'Retrieve',
             component: DaliccLicenseAnnotator
         }
     ]
