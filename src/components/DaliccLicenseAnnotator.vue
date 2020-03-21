@@ -124,7 +124,7 @@
                                                   filled disabled="disabled" :value="urlContent" label="URL to license"
                                                   prepend-icon="mdi-web"></v-text-field>
                                     <v-text-field id="url-summary" v-if="contentType === possibleToLicense[1]"
-                                                  filled disabled="disabled" :value="fileContent"
+                                                  filled disabled="disabled" :value="fileName"
                                                   label="Filename"
                                                   prepend-icon="mdi-file"></v-text-field>
 
@@ -183,6 +183,7 @@
                 userIsLicensor: null,
                 urlContent: null,
                 fileContent: null,
+                fileName: null,
                 checked: false,
                 checking: false,
                 information: '',
@@ -213,8 +214,7 @@
                 this.retrying = true;
                 store.commit('fetchDaliccLicenses');
                 setTimeout(() => this.retrying = false, 500)
-            }
-            ,
+            },
             evaluate(step) {
                 this.currentStep = step;
                 if (this.currentStep < 3) {
@@ -223,8 +223,7 @@
                     this.userIsLicensor = null;
                     this.information = ''
                 }
-            }
-            ,
+            },
             startCheck() {
                 this.checking = true;
                 let data = null;
@@ -242,7 +241,8 @@
                             this.alreadyLicensed = false;
                         } else {
                             this.alreadyLicensed = true;
-                            this.information = 'Licensor: ' + result[2] + '<br />License: <a target="_blank" href="' + result[1] + '">' + result[1].split('/')[result[1].split('/').length-1] + '</a>';
+                            const l = this.getLicenseInformationByUrl(result[1]);
+                            this.information = 'Licensor: ' + result[2] + '<br />License: <a target="_blank" href="' + l[1] + '">' + l[0] + '</a>';
                             if (typeof this.daliccLicense.getSelectedAddress() === 'string') {
                                 this.userIsLicensor = result[2].toLowerCase() === this.daliccLicense.getSelectedAddress().toLowerCase();
                             } else {
@@ -255,8 +255,7 @@
                     this.checking = false;
                     this.checked = true;
                     });
-            }
-            ,
+            },
             startLicensingProcess() {
                 this.licensing = true;
                 let data = null;
@@ -276,12 +275,17 @@
                         this.licenseOutput = 'Something went wrong. Please retry later.';
                     }
                 });
-            }
-            ,
+            },
+            getLicenseInformationByUrl(url) {
+                for (let i = 0; i < this.daliccLicenses.length; i++) {
+                    if (this.daliccLicenses[i][1] === url) {
+                        return this.daliccLicenses[i];
+                    }
+                }
+            },
             setContentType(contentType) {
                 this.contentType = contentType;
-            }
-            ,
+            },
             setLicenseType(licenseType) {
                 this.licenseType = licenseType;
                 for (let i = 0; i < this.daliccLicenses.length; i++) {
@@ -290,16 +294,14 @@
                         break;
                     }
                 }
-            }
-            ,
+            },
             setUrlContent() {
                 this.urlContent = document.getElementById('url').value;
                 this.checked = false;
                 this.userIsLicensor = null;
                 this.information = '';
                 if (this.urlContent.length === 0) this.urlContent = null;
-            }
-            ,
+            },
             setFileContent() {
                 let reader = new FileReader();
                 reader.onload = (event) => {
@@ -309,6 +311,7 @@
                     this.information = '';
                 };
                 reader.readAsText(document.getElementById('file').files[0]);
+                this.fileName = document.getElementById('file').files[0].name;
             }
         },
         created() {
